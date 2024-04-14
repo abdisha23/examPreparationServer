@@ -1,5 +1,5 @@
 const AsyncHandler = require('express-async-handler');
-const Material = require('../models/MaterialModel.js');
+const Material = require('../models/materialModel.js');
 const upload = require('../utils/multerConfig');
 
 const createMaterial = AsyncHandler(async (req, res) => {
