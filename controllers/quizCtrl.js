@@ -1,5 +1,5 @@
 const AsyncHandler = require('express-async-handler');
-const Quiz = require('../models/QuizModel.js');
+const Quiz = require('../models/quizModel.js');
 
 const createQuiz = AsyncHandler(async (req, res) => {
   try {
