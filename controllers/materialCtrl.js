@@ -25,9 +25,9 @@ const createMaterial = AsyncHandler(async (req, res) => {
         description,
         subject,
         file: {
-          data: pdfFile.path, // Store the file path
+          data: pdfFile.buffer, // Store the file path
           contentType: pdfFile.mimetype,
-          filename: pdfFile.filename
+          filename: pdfFile.originalname
         }
       });
 
