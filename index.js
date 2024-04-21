@@ -9,11 +9,12 @@ const userRouter = require('./routes/userRoute');
 const examRouter = require('./routes/examRoute');
 const quizRouter = require('./routes/quizRoute');
 const forumRouter = require('./routes/forumRoute');
-const materialRouter = require('./routes/materialRoute');
+const courseRouter = require('./routes/courseRoute');
+const fileRouter = require('./routes/fileRoute');
 
 const morgan = require('morgan');
 const cors = require('cors');
-const fileUpload = require('express-fileupload');
+
 
 dbConnection();
 app.use(cors());
@@ -22,12 +23,13 @@ app.use(morgan("dev"));
 app.use(express.json()) //For JSON requests
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
-app.use(fileUpload());
+
 app.use('/api/user', userRouter);
 app.use('/api/exam', examRouter);
 app.use('/api/quiz', quizRouter);
 app.use('/api/forum', forumRouter);
-app.use('/api/material', materialRouter);
+app.use('/api/course', courseRouter);
+app.use('/api/course-material', fileRouter);
 
 
 app.use(notFound);

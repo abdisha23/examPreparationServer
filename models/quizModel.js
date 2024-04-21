@@ -17,7 +17,7 @@ const questionSchema = new mongoose.Schema({
   description: String
 });
 
-const examSchema = new mongoose.Schema({
+const quizSchema = new mongoose.Schema({
   subject: {
     type: String,
     required: true
@@ -28,4 +28,4 @@ const examSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('Quiz', examSchema);
+module.exports = mongoose.model('Quiz', quizSchema);
