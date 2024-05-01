@@ -18,8 +18,7 @@ const {authMiddleware, isAdmin} = require('../middlewares/authMiddleware');
 const router = express.Router()
 router.post('/create', createUser);
 router.delete('/delete/:UserId', deleteUser);
-router.post('/user-login', loginUser);
-router.post('/admin-login', loginAdmin);
+router.post('/login', loginUser);
 router.put('/update', updateUser);
 router.put('/block/:userId', blockUser);
 router.put('/unblock/:userId', unblockUser);
