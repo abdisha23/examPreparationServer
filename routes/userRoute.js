@@ -16,7 +16,7 @@ const {
     } = require('../controllers/userCtrl');
 const {authMiddleware, isAdmin} = require('../middlewares/authMiddleware');
 const router = express.Router()
-router.post('/create', createUser);
+router.post('/register', createUser);
 router.delete('/delete/:UserId', deleteUser);
 router.post('/user-login', loginUser);
 router.post('/admin-login', loginAdmin);

@@ -14,8 +14,8 @@ const bcrypt = require('bcryptjs');
 
 const createUser = asyncHandler( async (req, res) => {
           const email = req.body.email;
-          const findAdmin = await User.findOne({email: email});
-          if(!findAdmin){
+          const user = await User.findOne({email: email});
+          if(!user){
               // create a new user
               const newUser = await User.create(req.body);
               res.json({

@@ -11,10 +11,10 @@ const {
 const {authMiddleware, isAdmin} = require('../middlewares/authMiddleware');
 const router = express.Router()
 router.post('/create', createExam);
-router.delete('/delete/:ExamId', deleteExam);
-router.delete('/delete/:ExamId/question/:questionId', deleteQuestion);
-router.put('/add/:ExamId', addQuestion);
-router.put('/update/:ExamId', updateQuestion);
+router.delete('/delete/:examId', deleteExam);
+router.delete('/delete/:examId/question/:questionId', deleteQuestion);
+router.put('/add/:examId', addQuestion);
+router.put('/update/:examId', updateQuestion);
 router.get('/get/:id', getExamById);
 router.get('/all', getallExams);
 
