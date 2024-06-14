@@ -1,11 +1,24 @@
 const AsyncHandler = require('express-async-handler');
+const Course = require('../models/courseModel.js');
 const Exam = require('../models/examModel.js');
 
 
 const createExam = AsyncHandler(async (req, res) => {
+  const { courseId } = req.params;
+  const {title, questions, year} = req.body;
   try {
-    const {subject, title, questions} = req.body;
-    const exam = await Exam.create({subject, title, questions});
+    const course = await Course.findById(courseId);
+    if (!course) {
+      res.status(404).json('No course found with id!');
+    }
+    
+
+    const existingExam = await Exam.findOne({ course : courseId, year : year});
+    if (existingExam) {
+      return res.status(400).json('This year exam for this course already exists!');
+    }
+    
+    const exam = await Exam.create({course: courseId, title, questions, year});
     res.status(201).json(exam);
   } catch (error) {
     console.log(error)
@@ -13,8 +26,13 @@ const createExam = AsyncHandler(async (req, res) => {
   }
 });
 const getallExams = AsyncHandler(async (req, res) => {
+  const { courseId } = req.params;
   try {
-    const exam = await Exam.find();
+    const existingExam = await Exam.findOne({ course: courseId});
+    if (!existingExam) {
+      return res.status(400).json('No exam found for this course!');
+    }
+    const exam = await Exam.findOne({course : courseId});
     res.status(200).json(exam);
   } catch (error) {
     console.log(error)

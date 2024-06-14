@@ -14,16 +14,17 @@ const questionSchema = new mongoose.Schema({
     required: true
   },
   answer: String,
-  description: String
 });
 
 const examSchema = new mongoose.Schema({
-  subject: {
-    type: String,
-    required: true
+  course: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course',
+    required: true,
   },
   title: String,
-  questions: [questionSchema]
+  questions: [questionSchema],
+  year: Number,
 }, {
   timestamps: true
 });
