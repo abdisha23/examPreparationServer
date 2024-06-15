@@ -3,40 +3,52 @@ const Course = require('../models/courseModel.js');
 const Exam = require('../models/examModel.js');
  // Assuming Exam model is imported
 
-const createExam = AsyncHandler(async (req, res) => {
+ const createExam = AsyncHandler(async (req, res) => {
   const { courseId } = req.params;
-  const { exam } = req.body;
-  const firstExam = exam[0];
+  const { examData } = req.body;
 
   try {
-    // Check if the course exists
-    const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ error: 'No course found with that id!' });
-    }
+    // Check if examData is provided and is an array with at least one element
+    // if (!Array.isArray(examData) || examData.length === 0) {
+    //   return res.status(400).json({ error: 'Invalid exam data provided' });
+    // }
 
-    // Check if an exam for this course and year already exists
-    const existingExam = await Exam.findOne({ course: courseId, 'exam.year': firstExam.year });
-    if (existingExam) {
-      return res.status(400).json({ error: 'An exam for this course and year already exists!' });
-    }
+    const createdExams = [];
 
-    // Create the exam
-    const exam = await Exam.create({
-      course: courseId,
-      exam: {
-        title: firstExam.title,
-        questions: firstExam.questions,
-        year: firstExam.year
+    // Iterate through each exam in examData array
+    for (const exam of examData) {
+      // Check if the course exists
+      const course = await Course.findById(courseId);
+      if (!course) {
+        return res.status(404).json({ error: 'No course found with that id!' });
       }
-    });
 
-    res.status(201).json(exam);
+      // Check if an exam for this course and year already exists
+      const existingExam = await Exam.findOne({ course: courseId, 'exam.year': exam.year });
+      if (existingExam) {
+        return res.status(400).json({ error: `An exam for course ${courseId} and year ${exam.year} already exists!` });
+      }
+
+      // Create the exam
+      const createdExam = await Exam.create({
+        course: courseId,
+        exam: {
+          title: exam.title,
+          questions: exam.questions,
+          year: exam.year
+        }
+      });
+
+      createdExams.push(createdExam);
+    }
+
+    res.status(201).json(createdExams);
   } catch (error) {
-    console.error('Error creating exam:', error);
-    res.status(500).json({ error: 'Failed to create exam' });
+    console.error('Error creating exams:', error);
+    res.status(500).json({ error: 'Failed to create exams' });
   }
 });
+
 
 const getallExams = AsyncHandler(async (req, res) => {
   const { courseId } = req.params;
