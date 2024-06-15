@@ -1,6 +1,7 @@
 const AsyncHandler = require('express-async-handler');
-const Course = require('../models/Course'); // Assuming Course model is imported
-const Exam = require('../models/Exam'); // Assuming Exam model is imported
+const Course = require('../models/courseModel.js');
+const Exam = require('../models/examModel.js');
+ // Assuming Exam model is imported
 
 const createExam = AsyncHandler(async (req, res) => {
   const { courseId } = req.params;
@@ -36,4 +37,136 @@ const createExam = AsyncHandler(async (req, res) => {
   }
 });
 
-module.exports = createExam;
+const getallExams = AsyncHandler(async (req, res) => {
+  const { courseId } = req.params;
+  try {
+    const existingExam = await Exam.findOne({ course: courseId});
+    if (!existingExam) {
+      return res.status(400).json('No exam found for this course!');
+    }
+    res.status(200).json(existingExam);
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: 'Failed to load the exam!' });
+  }
+});
+const getExamById = AsyncHandler(async (req, res) => {
+    const examId = req.params.examId;
+  try {
+    const exam = await Exam.findById(examId);
+    if(!exam){
+        return res.status(404).json({ error: 'Exam not found with this id!' });
+    }
+    res.status(200).json(exam);
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: 'Failed to load the exam!' });
+  }
+});
+const deleteExam = AsyncHandler(async (req, res) => {
+    const examId = req.params.examId;
+    try {
+      // Delete the exam directly
+      const deletedExam = await Exam.findByIdAndDelete(examId);
+      if (!deletedExam) {
+        return res.status(404).json({ error: 'Exam not found with this id!' });
+      }
+      res.status(200).json(deletedExam);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Failed to delete the exam!' });
+    }
+  });
+const updateQuestion = AsyncHandler(async (req, res) => {
+    try {
+      const examId = req.params.examId;
+      const updatedQuestions = req.body.questions; // Assuming the updated questions are sent in the request body
+      const exam = await Exam.findById(examId);
+      if (!exam) {
+        return res.status(404).json({ error: 'Exam not found with this id!' });
+      }
+
+      // Update the existing questions
+      exam.questions = exam.questions.map((currentQuestion) => {
+        const updatedQuestion = updatedQuestions.find((q) => q._id.toString() === currentQuestion._id.toString());
+        if (updatedQuestion) {
+          currentQuestion.question = updatedQuestion.question;
+          currentQuestion.options = updatedQuestion.options;
+          currentQuestion.answer = updatedQuestion.answer;
+        }
+        return currentQuestion;
+      });
+
+      await exam.save();
+
+      return res.status(200).json({ message: 'Exam updated successfully!' });
+    } catch (error) {
+      return res.status(500).json({ error: 'Failed to update the exam!' });
+    }
+  });
+  const deleteQuestion = AsyncHandler(async (req, res) => {
+    try {
+      const {examId, questionId} = req.params;
+
+      // Find the exam
+      const exam = await Exam.findById(examId);
+      if (!exam) {
+        return res.status(404).json({ error: 'Exam not found with this id!' });
+      }
+
+      // Find the index of the question to be deleted
+      const questionIndex = exam.questions.findIndex((q) => q._id.toString() === questionId);
+      if (questionIndex === -1) {
+        return res.status(404).json({ error: 'Question not found with this id!' });
+      }
+
+      // Remove the question from the exam's questions array
+      const deletedQuestion = exam.questions.splice(questionIndex, 1)[0];
+
+      // Save the updated exam
+      await exam.save();
+
+      // Return the deleted question
+      return res.status(200).json(deletedQuestion);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: 'Failed to delete the question!' });
+    }
+  });
+
+  const addQuestion = AsyncHandler(async(req, res) => {
+    const examId = req.params.examId;
+    let newQuestions = req.body.questions;
+    const exam = await Exam.findById(examId);
+
+if (!exam) {
+  return res.status(404).json({ error: 'Exam not found' });
+}
+
+const currentQuestions = exam.questions;
+
+const updatedQuestions = [...currentQuestions, ...newQuestions]; // Merge existing and new questions, or apply desired modifications
+
+exam.questions = updatedQuestions;
+
+try {
+  await exam.save();
+  return res.status(200).json({ message: 'Exam updated successfully' });
+} catch (error) {
+  return res.status(500).json({ error: 'Failed to update exam' });
+}
+
+  })
+module.exports = { 
+    createExam, 
+    getallExams, 
+    getExamById, 
+    updateQuestion, 
+    addQuestion, 
+    deleteExam,
+    deleteQuestion 
+  };
+
+
+
+
