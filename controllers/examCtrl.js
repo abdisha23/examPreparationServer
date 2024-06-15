@@ -5,7 +5,7 @@ const Exam = require('../models/examModel.js');
 
 const createExam = AsyncHandler(async (req, res) => {
   const { courseId } = req.params;
-  const { examData } = req.body;
+  const { exam } = req.body.exam[0];
 
   try {
     // Check if the course exists
@@ -15,7 +15,7 @@ const createExam = AsyncHandler(async (req, res) => {
     }
 
     // Check if an exam for this course and year already exists
-    const existingExam = await Exam.findOne({ course: courseId, 'exam.year': examData.year });
+    const existingExam = await Exam.findOne({ course: courseId, 'exam.year': exam.year });
     if (existingExam) {
       return res.status(400).json({ error: 'An exam for this course and year already exists!' });
     }
@@ -24,9 +24,9 @@ const createExam = AsyncHandler(async (req, res) => {
     const exam = await Exam.create({
       course: courseId,
       exam: {
-        title: examData.title,
-        questions: examData.questions,
-        year: examData.year
+        title: exam.title,
+        questions: exam.questions,
+        year: exam.year
       }
     });
 
