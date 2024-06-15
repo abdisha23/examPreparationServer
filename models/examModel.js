@@ -14,6 +14,8 @@ const questionSchema = new mongoose.Schema({
     required: true
   },
   answer: String,
+  description: String,
+
 });
 
 const examSchema = new mongoose.Schema({
@@ -22,9 +24,11 @@ const examSchema = new mongoose.Schema({
     ref: 'Course',
     required: true,
   },
-  title: String,
-  questions: [questionSchema],
-  year: Number,
+  exams: [{
+    title: String,
+    questions: [questionSchema],
+    year: Number,
+}]
 }, {
   timestamps: true
 });
