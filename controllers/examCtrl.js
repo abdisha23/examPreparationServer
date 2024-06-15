@@ -53,16 +53,24 @@ const Exam = require('../models/examModel.js');
 const getallExams = AsyncHandler(async (req, res) => {
   const { courseId } = req.params;
   try {
-    const existingExam = await Exam.findOne({ course: courseId});
-    if (!existingExam) {
-      return res.status(400).json('No exam found for this course!');
+    const existingExams = await Exam.findOne({ course: courseId }).populate({
+      path: 'exam',
+      populate: {
+        path: 'questions'
+      }
+    });
+    
+    if (!existingExams) {
+      return res.status(404).json('No exams found for this course!');
     }
-    res.status(200).json(existingExam);
+    
+    res.status(200).json(existingExams);
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: 'Failed to load the exam!' });
+    console.error('Error loading exams:', error);
+    res.status(500).json({ error: 'Failed to load exams!' });
   }
 });
+
 const getExamById = AsyncHandler(async (req, res) => {
     const examId = req.params.examId;
   try {
