@@ -53,12 +53,7 @@ const Exam = require('../models/examModel.js');
 const getallExams = AsyncHandler(async (req, res) => {
   const { courseId } = req.params;
   try {
-    const existingExams = await Exam.findOne({ course: courseId }).populate({
-      path: 'exam',
-      populate: {
-        path: 'questions'
-      }
-    });
+    const existingExams = await Exam.findOne({ course: courseId });
     
     if (!existingExams) {
       return res.status(404).json('No exams found for this course!');
