@@ -24,7 +24,7 @@ const examSchema = new mongoose.Schema({
     ref: 'Course',
     required: true,
   },
-  exams: [{
+  exam: [{
     title: String,
     questions: [questionSchema],
     year: Number,

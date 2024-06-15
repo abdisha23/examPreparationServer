@@ -18,7 +18,8 @@ const createExam = AsyncHandler(async (req, res) => {
       return res.status(400).json('This year exam for this course already exists!');
     }
     
-    const exam = await Exam.create({course: courseId, title, questions, year});
+    const exam = await Exam.create({
+      course: courseId, exam});
     res.status(201).json(exam);
   } catch (error) {
     console.log(error)
