@@ -63,7 +63,7 @@ const getallExams = AsyncHandler(async (req, res) => {
     if (!existingExams) {
       return res.status(404).json('No exams found for this course!');
     }
-    
+    console.log(existingExams)
     res.status(200).json(existingExams);
   } catch (error) {
     console.error('Error loading exams:', error);
