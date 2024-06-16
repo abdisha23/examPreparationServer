@@ -6,12 +6,10 @@ const asyncHandler = require('express-async-handler');
 var userSchema = new mongoose.Schema({
     firstName:{
         type:String,
-        required:true,
         
     },
     lastName:{
         type:String,
-        required:true,
         
     },
     email:{
@@ -23,9 +21,8 @@ var userSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    phone:{
+    phonNumber:{
         type:String,
-        required:true,
         unique: true,
     },
     
