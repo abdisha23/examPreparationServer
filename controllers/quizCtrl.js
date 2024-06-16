@@ -10,22 +10,17 @@ const createQuiz = AsyncHandler(async (req, res) => {
 
     const createdQiuzzes = [];
 
-    // Iterate through each quiz in quizData array
     for (const quiz of quizData) {
-      // Check if the course exists
       const course = await Course.findById(courseId);
       if (!course) {
         return res.status(404).json({ error: 'No course found with that id!' });
       }
-
-      // Check if an quiz for this course and year already exists
-      const existingQuiz = await quiz.findOne({ course: courseId});
+      const existingQuiz = await Quiz.findOne({ course: courseId});
       if (existingQuiz) {
         return res.status(400).json({ error: `An quiz for course ${courseId} and year ${quiz.year} already exists!` });
       }
 
-      // Create the quiz
-      const createdQiuz = await quiz.create({
+      const createdQiuz = await Quiz.create({
         course: courseId,
         quiz: {
           title: quiz.title,
@@ -39,8 +34,8 @@ const createQuiz = AsyncHandler(async (req, res) => {
 
     res.status(201).json(createdQiuzzes);
   } catch (error) {
-    console.error('Error creating quizs:', error);
-    res.status(500).json({ error: 'Failed to create quizs' });
+    console.error('Error creating quiz:', error);
+    res.status(500).json({ error: 'Failed to create quiz' });
   }
 });
 
