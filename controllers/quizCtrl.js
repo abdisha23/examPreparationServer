@@ -13,7 +13,7 @@ const createQuiz = AsyncHandler(async (req, res) => {
     // Iterate through each quiz in quizData array
     for (const quiz of quizData) {
       // Check if the course exists
-      const course = await Course.findById({course: courseId});
+      const course = await Course.findById(courseId);
       if (!course) {
         return res.status(404).json({ error: 'No course found with that id!' });
       }
