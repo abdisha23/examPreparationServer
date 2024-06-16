@@ -150,29 +150,41 @@ const updateQuestion = AsyncHandler(async (req, res) => {
     }
   });
 
-  const addQuestion = AsyncHandler(async(req, res) => {
+  const addQuestion = AsyncHandler(async (req, res) => {
+    const courseId = req.params.courseId;
     const examId = req.params.examId;
-    let newQuestions = req.body.questions;
-    const exam = await Exam.findById(examId);
-
-if (!exam) {
-  return res.status(404).json({ error: 'Exam not found' });
-}
-
-const currentQuestions = exam.questions;
-
-const updatedQuestions = [...currentQuestions, ...newQuestions]; // Merge existing and new questions, or apply desired modifications
-
-exam.questions = updatedQuestions;
-
-try {
-  await exam.save();
-  return res.status(200).json({ message: 'Exam updated successfully' });
-} catch (error) {
-  return res.status(500).json({ error: 'Failed to update exam' });
-}
-
-  })
+    const newQuestion = req.body.question; // Assuming req.body.question contains a single new question object
+  
+    // Find the exam by course id
+    let courseExam;
+    try {
+      courseExam = await Exam.findOne({ course: courseId });
+    } catch (error) {
+      return res.status(500).json({ error: 'Failed to find exam' });
+    }
+  
+    if (!courseExam) {
+      return res.status(404).json({ error: 'Exam not found with this course id' });
+    }
+  
+    // Find the specific exam in the courseExam that matches examId
+    const examToUpdate = courseExam.exam.find(exam => exam._id.toString() === examId);
+  
+    if (!examToUpdate) {
+      return res.status(404).json({ error: 'Exam not found with this exam id' });
+    }
+  
+    // Add the new question to the existing questions array
+    examToUpdate.questions.push(newQuestion);
+  
+    try {
+      await courseExam.save();
+      return res.status(200).json({ message: 'Question added to exam successfully', exam: examToUpdate });
+    } catch (error) {
+      return res.status(500).json({ error: 'Failed to update exam' });
+    }
+  });
+  
 module.exports = { 
     createExam, 
     getallExams, 

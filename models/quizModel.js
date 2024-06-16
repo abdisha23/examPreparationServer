@@ -18,12 +18,15 @@ const questionSchema = new mongoose.Schema({
 });
 
 const quizSchema = new mongoose.Schema({
-  subject: {
-    type: String,
-    required: true
+  course: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course',
+    required: true,
   },
-  title: String,
-  questions: [questionSchema]
+  quiz: [{
+    title: String,
+    questions: [questionSchema],
+}]
 }, {
   timestamps: true
 });
