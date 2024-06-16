@@ -43,6 +43,8 @@ const createCourseMaterial = AsyncHandler(async (req, res) => {
             url: uploadedFile.secure_url,
             public_id: uploadedFile.public_id,
             contentType: file.mimetype,
+            //resource_type: auto,
+            access_mode: 'public',
             filename: file.originalname
           };
         }
