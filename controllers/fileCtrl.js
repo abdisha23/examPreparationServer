@@ -24,7 +24,7 @@ const createCourseMaterial = AsyncHandler(async (req, res) => {
       }
 
       const { title, description } = req.body;
-      const newFiles = [];
+      
       const newFile = {};
 
       if (title) {
@@ -45,13 +45,7 @@ const createCourseMaterial = AsyncHandler(async (req, res) => {
             filename: file.originalname
           };
         }
-        newFiles.push(newFile);
-      
-
-      const createdCourseMaterial = await CourseMaterial.create({
-        course: courseId,
-        files: newFiles
-      });
+        
 
       res.status(201).json(createdCourseMaterial);
     });
@@ -92,10 +86,7 @@ const uploadFile = async (req, res) => {
       return res.status(404).json('No course found with id!');
     }
 
-    const courseMaterial = await CourseMaterial.findOne({course: courseId});
-    if (!courseMaterial) {
-      return res.status(404).json('No material found for this course!');
-    }
+    const existingMaterial = await CourseMaterial.findOne({course: courseId});
 
     upload.single('file')(req, res, async (err) => {
       if (err) {
@@ -104,7 +95,7 @@ const uploadFile = async (req, res) => {
       }
 
       const { title, description } = req.body;
-
+      const newFiles = [];
       let newFile = {};
 
       if (title) {
@@ -129,9 +120,20 @@ const uploadFile = async (req, res) => {
           filename: file.originalname
         };
       }
+      if(existingMaterial){
+        existingMaterial.files.push(newFile);
+      }else{
+        newFiles.push(newFile);
+        await CourseMaterial.create({
+        course: courseId,
+        files: newFiles
+      });
 
-      courseMaterial.files.push(newFile);
-       await courseMaterial.save();
+      }
+      
+       if(existingMaterial){
+        await existingMaterial.save();
+       }
 
       res.status(201).json(newFile);
     });
