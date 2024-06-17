@@ -9,9 +9,9 @@ cloudinary.config({
 const cloudinaryUploadFile = async (fileToUpload) => {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(fileToUpload, {
-      resource_type: 'auto', // Set resource_type to 'raw' for non-image files like PDFs
-      // use_filename: true, // Use the original filename for Cloudinary's public_id
-      // unique_filename: false, // Do not append a unique identifier to the filename
+      resource_type: 'raw', // Set resource_type to 'raw' for non-image files like PDFs
+      use_filename: true, // Use the original filename for Cloudinary's public_id
+      unique_filename: false, // Do not append a unique identifier to the filename
       folder: 'eXamPrep_files', // Optional: Specify a folder in Cloudinary to organize uploads
       access_mode: 'public' // Ensure the uploaded file is publicly accessible
     }, (error, result) => {
