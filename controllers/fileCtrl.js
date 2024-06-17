@@ -24,7 +24,7 @@ const createCourseMaterial = AsyncHandler(async (req, res) => {
       }
 
       const { title, description } = req.body;
-      const neFiles = [];
+      const newFiles = [];
       const newFile = {};
 
       if (title) {
