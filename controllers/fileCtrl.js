@@ -24,7 +24,7 @@ const createCourseMaterial = AsyncHandler(async (req, res) => {
       }
 
       const { title, description } = req.body;
-      let newFiles = [];
+      const neFiles = [];
       const newFile = {};
 
       if (title) {
@@ -38,7 +38,7 @@ const createCourseMaterial = AsyncHandler(async (req, res) => {
           const uploadedFile = await cloudinary.cloudinaryUploadFile(file.path);
           fs.unlinkSync(file.path);
           newFile.file = {
-            url: uploadedFile.url,
+            url: uploadedFile.secure_.url,
             public_id: uploadedFile.public_id,
             contentType: 'application/pdf',
             contentType: file.mimetype,

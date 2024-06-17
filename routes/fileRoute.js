@@ -1,5 +1,6 @@
 const express = require('express');
-
+// const upload = require('../utils/multerConfig.js');
+// upload.single("file"),
 const {
     createCourseMaterial,
     deleteCourseMaterial,
