@@ -19,7 +19,7 @@ const cloudinaryUploadFile = async (fileToUpload) => {
         reject(error);
       } else {
         resolve({
-          url: result.secure_url,
+          url: result.url,
           public_id: result.public_id,
           contentType: result.resource_type,
           filename: result.original_filename
