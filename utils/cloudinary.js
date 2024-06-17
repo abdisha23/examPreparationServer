@@ -1,4 +1,4 @@
-const cloudinary = require("cloudinary");
+const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -6,37 +6,27 @@ cloudinary.config({
   api_secret: process.env.SECRET_KEY,
 });
 
-const cloudinaryUploadImg = async (fileToUploads) => {
-  return new Promise((resolve) => {
-    cloudinary.uploader.upload(fileToUploads, (result) => {
-      resolve(
-        {
+const cloudinaryUploadFile = async (fileToUpload) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload(fileToUpload, {
+      resource_type: 'raw', // Set resource_type to 'raw' for non-image files like PDFs
+      use_filename: true, // Use the original filename for Cloudinary's public_id
+      unique_filename: false, // Do not append a unique identifier to the filename
+      folder: 'pdf_files', // Optional: Specify a folder in Cloudinary to organize uploads
+      access_mode: 'public' // Ensure the uploaded file is publicly accessible
+    }, (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve({
           url: result.secure_url,
-          asset_id: result.asset_id,
           public_id: result.public_id,
-        },
-        {
-          resource_type: "auto",
-        }
-      );
-    });
-  });
-};
-const cloudinaryDeleteImg = async (fileToDelete) => {
-  return new Promise((resolve) => {
-    cloudinary.uploader.destroy(fileToDelete, (result) => {
-      resolve(
-        {
-          url: result.secure_url,
-          asset_id: result.asset_id,
-          public_id: result.public_id,
-        },
-        {
-          resource_type: "auto",
-        }
-      );
+          contentType: result.resource_type,
+          filename: result.original_filename
+        });
+      }
     });
   });
 };
 
-module.exports = { cloudinaryUploadImg, cloudinaryDeleteImg };
+module.exports = { cloudinaryUploadFile };

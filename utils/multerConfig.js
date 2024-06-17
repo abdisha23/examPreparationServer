@@ -16,6 +16,12 @@ const upload = multer({
   storage: storage,
   limits: {
     fileSize: Infinity // Set the fileSize limit to Infinity for unlimited file size
+  },
+  fileFilter: function (req, file, cb) {
+    if (file.mimetype !== 'application/pdf') {
+      return cb(new Error('Only PDF files are allowed'));
+    }
+    cb(null, true);
   }
 });
 

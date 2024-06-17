@@ -3,13 +3,8 @@ const CourseMaterial = require('../models/fileModel.js');
 const Course = require('../models/courseModel.js');
 const upload = require('../utils/multerConfig.js');
 const fs = require('fs');
-const cloudinary = require("cloudinary");
+const {cloudinaryUploadFile} = require("../utils/cloudinary");
 
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.SECRET_KEY,
-});
 
 const createCourseMaterial = AsyncHandler(async (req, res) => {
   const { courseId } = req.params;
@@ -29,30 +24,29 @@ const createCourseMaterial = AsyncHandler(async (req, res) => {
       }
 
       const { title, description } = req.body;
-      const file = req.file;
-
-      const newFiles = [];
+      let newFiles = [];
+      const newFile = {};
 
       if (title) {
-        const newFile = {};
-
-        if (description && file) {
-          const uploadedFile = await cloudinary.uploader.upload(file.path);
+        newFile.title = title;
+      }
+      if (description) {
+        newFile.description = description;
+      }
+       
+        if (req.file) {
+          const uploadedFile = await cloudinary.cloudinaryUploadFile(file.path);
           fs.unlinkSync(file.path);
           newFile.file = {
-            url: uploadedFile.secure_url,
+            url: uploadedFile.url,
             public_id: uploadedFile.public_id,
+            contentType: 'application/pdf',
             contentType: file.mimetype,
-            //resource_type: auto,
-            access_mode: 'public',
             filename: file.originalname
           };
         }
-
-        newFile.title = title;
-        newFile.description = description;
         newFiles.push(newFile);
-      }
+      
 
       const createdCourseMaterial = await CourseMaterial.create({
         course: courseId,
@@ -124,12 +118,13 @@ const uploadFile = async (req, res) => {
       if (req.file) {
         const file = req.file;
 
-        const uploadedFile = await cloudinary.uploader.upload(file.path);
+        const uploadedFile = await cloudinaryUploadFile(file.path);
         fs.unlinkSync(file.path);
 
         newFile.file = {
-          url: uploadedFile.secure_url,
+          url: uploadedFile.url,
           public_id: uploadedFile.public_id,
+          contentType: 'application/pdf',
           contentType: file.mimetype,
           filename: file.originalname
         };
