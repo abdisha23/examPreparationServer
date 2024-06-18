@@ -8,13 +8,13 @@ const {
     addQuizQuestion,
     deleteQuizQuestion
     } = require('../controllers/quizCtrl');
-const {authMiddleware, isAdmin} = require('../middlewares/authMiddleware');
+const {authMiddleware, isSME} = require('../middlewares/authMiddleware');
 const router = express.Router()
-router.post('/create/:courseId', createQuiz);
-router.delete('/delete/:quizId', deleteQuiz);
-router.delete('/delete/:quizId/question/:questionId', deleteQuizQuestion);
-router.put('/add/:quizId', addQuizQuestion);
-router.put('/update/:quizId/question/:questionId', updateQuizQuestion);
+router.post('/create/:courseId', authMiddleware, isSME, createQuiz);
+router.delete('/delete/:quizId', authMiddleware, isSME, deleteQuiz);
+router.delete('/delete/:quizId/question/:questionId', authMiddleware, isSME, deleteQuizQuestion);
+router.put('/add/:quizId', authMiddleware, isSME, addQuizQuestion);
+router.put('/update/:quizId/question/:questionId', authMiddleware, isSME, updateQuizQuestion);
 router.get('/get/:quizId', getQuizById);
 router.get('/all/:courseId', getallQuizzes);
 

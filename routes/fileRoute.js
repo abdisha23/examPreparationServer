@@ -12,15 +12,15 @@ const {
     deleteAllFiles    
 
     } = require('../controllers/fileCtrl');
-const {authMiddleware, isAdmin} = require('../middlewares/authMiddleware');
+const {authMiddleware, isAdmin, isSME} = require('../middlewares/authMiddleware');
 const router = express.Router();
-router.post('/create/:courseId', createCourseMaterial);
-router.delete('/delete/:courseId', deleteCourseMaterial);
-router.post('/material/upload/:courseId', uploadFile);
+router.post('/create/:courseId', authMiddleware, isSME, createCourseMaterial);
+router.delete('/delete/:courseId', authMiddleware, isSME, deleteCourseMaterial);
+router.post('/material/upload/:courseId', authMiddleware, isSME, uploadFile);
 router.get('/material/getall/:courseId', getallFiles);
 router.get('/material/get/:courseId/file/:fileId', getFileById);
-router.put('/material/update/:courseId/file/:fileId', updateFile);
-router.delete('/material/delete/:courseId/file/:fileId', deleteFile);
+router.put('/material/update/:courseId/file/:fileId', authMiddleware, isSME, updateFile);
+router.delete('/material/delete/:courseId/file/:fileId', authMiddleware, isSME, deleteFile);
 
 
 

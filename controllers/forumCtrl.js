@@ -15,6 +15,7 @@ const createForum = AsyncHandler(async (req, res) => {
 const getallForums = AsyncHandler(async (req, res) => {
   try {
     const forum = await Forum.find();
+    // .populate('postedBy');
     res.status(200).json(forum);
   } catch (error) {
     console.log(error)

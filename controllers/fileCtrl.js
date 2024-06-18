@@ -86,60 +86,65 @@ const uploadFile = async (req, res) => {
       return res.status(404).json('No course found with id!');
     }
 
-    const existingMaterial = await CourseMaterial.findOne({course: courseId});
+    // Check if there's already a CourseMaterial document for this courseId
+    let existingMaterial = await CourseMaterial.findOne({ course: courseId });
 
+    // Handle file upload using Multer middleware
     upload.single('file')(req, res, async (err) => {
-      if (err) {
-        console.error('Multer error:', err);
-        return res.status(400).json({ message: err.message });
+      try {
+        if (err) {
+          console.log('Multer error:', err);
+          throw new Error(err.message);
+        }
+
+        const { title, description } = req.body;
+        const newFile = {};
+
+        if (title) {
+          newFile.title = title;
+        }
+
+        if (description) {
+          newFile.description = description;
+        }
+
+        if (req.file) {
+          const file = req.file;
+
+          const uploadedFile = await cloudinaryUploadFile(file.path);
+          fs.unlinkSync(file.path);
+
+          newFile.file = {
+            url: uploadedFile.url,
+            public_id: uploadedFile.public_id,
+            contentType: 'application/pdf', // Assuming it's always PDF based on your code
+            filename: file.originalname
+          };
+        }
+
+        // If existingMaterial is found, update it; otherwise, create a new CourseMaterial
+        if (existingMaterial) {
+          existingMaterial.files.push(newFile);
+          await existingMaterial.save();
+        } else {
+          // Create a new CourseMaterial document
+          const newFiles = [newFile]; // Using an array to match how files are stored
+
+          await CourseMaterial.create({
+            course: courseId,
+            files: newFiles
+          });
+        }
+
+        res.status(201).json(newFile);
+      } catch (error) {
+        console.log('Error handling file upload:', error);
+        res.status(500).json({ message: 'Failed to process file upload' });
       }
-
-      const { title, description } = req.body;
-      const newFiles = [];
-      let newFile = {};
-
-      if (title) {
-        newFile.title = title;
-      }
-
-      if (description) {
-        newFile.description = description;
-      }
-
-      if (req.file) {
-        const file = req.file;
-
-        const uploadedFile = await cloudinaryUploadFile(file.path);
-        fs.unlinkSync(file.path);
-
-        newFile.file = {
-          url: uploadedFile.url,
-          public_id: uploadedFile.public_id,
-          contentType: 'application/pdf',
-          contentType: file.mimetype,
-          filename: file.originalname
-        };
-      }
-      if(existingMaterial){
-        existingMaterial.files.push(newFile);
-      }else{
-        newFiles.push(newFile);
-        await CourseMaterial.create({
-        course: courseId,
-        files: newFiles
-      });
-
-      }
-      
-       if(existingMaterial){
-        await existingMaterial.save();
-       }
-
-      res.status(201).json(newFile);
     });
   } catch (error) {
-    console.error('Error uploading file:', error);
-    res.status(500).json({ message: 'Failed to upload file' });
+    console.error('Error finding course:', error);
+    res.status(500).json({ message: 'Failed to find course' });
   }
 };
 

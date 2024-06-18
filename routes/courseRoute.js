@@ -7,10 +7,10 @@ const {
     } = require('../controllers/courseCtrl');
 const {authMiddleware, isAdmin} = require('../middlewares/authMiddleware');
 const router = express.Router();
-router.post('/create', createCourse);
+router.post('/create', authMiddleware, isAdmin, createCourse);
 router.get('/all', getallCourses);
 router.get('/:courseId', getCourse);
-router.delete('/delete/:courseId', deleteCourse);
+router.delete('/delete/:courseId', authMiddleware, isAdmin, deleteCourse);
 
 
 

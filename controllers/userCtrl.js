@@ -12,7 +12,24 @@ const sendEmail = require('./emailCtrl');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 
-const createUser = asyncHandler( async (req, res) => {
+const createStudent = asyncHandler( async (req, res) => {
+          const email = req.body.email;
+          const user = await User.findOne({email: email});
+          if(!user){
+              // create a new user
+              const newUser = await User.create(req.body);
+              res.json({
+                  newUser  
+              })
+          }
+          else{
+            throw err = new Error('This User already exists!');
+         }
+        
+    }
+);
+
+const createSME = asyncHandler( async (req, res) => {
           const email = req.body.email;
           const user = await User.findOne({email: email});
           if(!user){
@@ -576,7 +593,8 @@ const resetPassword = asyncHandler( async(req, res) => {
 //   res.json(data);
 // });
 module.exports = {
-    createUser, 
+    createStudent, 
+    createSME,
     deleteUser, 
     loginUser, 
     getallUsers, 
