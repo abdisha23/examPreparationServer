@@ -117,7 +117,7 @@ const uploadFile = async (req, res) => {
           newFile.file = {
             url: uploadedFile.url,
             public_id: uploadedFile.public_id,
-            contentType: 'application/pdf', // Assuming it's always PDF based on your code
+            // contentType: 'application/pdf', // Assuming it's always PDF based on your code
             filename: file.originalname
           };
         }
